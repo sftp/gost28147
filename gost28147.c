@@ -102,9 +102,9 @@ int main (int argc, char *argv[])
 
 	u32 key[8];
 
-	FILE *f = fopen(args.keypath, "r");
+	FILE *k_fd = fopen(args.keypath, "r");
 
-	if(test_file(f, args.keypath) != 32) {
+	if(test_file(k_fd, args.keypath) != 32) {
 		printf("Key size must be 32 bytes\n");
 		return -1;
 	}
@@ -112,9 +112,9 @@ int main (int argc, char *argv[])
 	u8 i;
 
 	for(i = 0; i < 8; i++)
-		fread(&key[i], 4, 1, f);
+		fread(&key[i], 4, 1, k_fd);
 
-	fclose(f);
+	fclose(k_fd);
 
 	printf("key = ");
 	for (i = 0; i < 8; i++)
