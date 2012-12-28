@@ -40,13 +40,13 @@ void swap32(u32 *a, u32 *b)
 	u32 tmp = *a;
 
 	*a = *b;
-	*b = tmp;       
+	*b = tmp;
 }
 
 void encrypt_block(u32 *l, u32 *r, u32 *key)
 {
 	u8 i;
-	
+
 	for (i = 0; i < 23; i += 2) {
 		*l ^= f(r, *r + key[i % 8]);
 		*r ^= f(l, *l + key[(i+1) % 8]);
