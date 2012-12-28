@@ -1,6 +1,6 @@
 #include "gost28147.h"
 
-void ecb_crypt(FILE *src, FILE *dst, u32 *key, int size, u8 encrypt)
+void ecb_crypt(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
 {
 	if(size % 8 != 0) {
 		printf("In ECB mode sourse file size should be multiple of 8\n");
