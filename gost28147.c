@@ -21,7 +21,7 @@ struct args_t {
 	const char *outpath;
 } args;
 
-int parse_args(int argc, char *argv[])
+void parse_args(int argc, char *argv[])
 {
 	args.help    = 0;
 	args.key     = 0;
@@ -66,7 +66,7 @@ int parse_args(int argc, char *argv[])
 	}
 
 	if(args.key && (args.encrypt != args.decrypt) && args.out && !args.help) {
-		return 1;
+		return;
 	} else {
 		help();
 		exit(0);
