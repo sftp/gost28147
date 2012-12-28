@@ -1,13 +1,13 @@
 #include <unistd.h>
 
-#include "gost28147.h"
+#include "modes.h"
 
 void help(void) {
 	printf("Usage: gost28147 -k /path/to/key [-d|-e] /path/to/srcfile -o /path/to/outfile\n");
 }
 
 struct args_t {
-	
+
 	u8 help;
 
 	u8 key;
@@ -97,8 +97,8 @@ int main (int argc, char *argv[])
 {
 	parse_args(argc, argv);
 
-	u32 r = 0x87654321;
-	u32 l = 0xfedcba98;
+	u32 l;
+	u32 r;
 
 	u32 key[8];
 
@@ -116,26 +116,22 @@ int main (int argc, char *argv[])
 
 	fclose(k_fd);
 
-	printf("key = ");
-	for (i = 0; i < 8; i++)
-		printf("0x%08x ", key[i]);
-	putchar('\n');
+	FILE *s_fd = fopen(args.srcpath, "r");
 
-	printf("l = 0x%08x\t"
-	       "r = 0x%08x\n",
-	       l, r);
+	u32 srclen = test_file(s_fd, args.srcpath);
 
-	encrypt_block(&l, &r, key);
+	if(srclen == 0) {
+		printf("Nothing to do, file %s is empty\n", args.srcpath);
+		fclose(s_fd);
+		return -1;
+	}
 
-	printf("l = 0x%08x\t"
-	       "r = 0x%08x\n",
-	       l, r);
+	FILE *o_fd = fopen(args.outpath, "w");
 
-	decrypt_block(&l, &r, key);
+	ecb_crypt(s_fd, o_fd, key, srclen, (u8) args.encrypt);
 
-	printf("l = 0x%08x\t"
-	       "r = 0x%08x\n",
-	       l, r);
+	fclose(s_fd);
+	fclose(o_fd);
 
 	return 0;
 }
