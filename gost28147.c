@@ -7,7 +7,6 @@ void help(void) {
 }
 
 struct args_t {
-
 	u8 help;
 
 	u8 key;
@@ -65,7 +64,7 @@ void parse_args(int argc, char *argv[])
 		};
 	}
 
-	if(args.key && (args.encrypt != args.decrypt) && args.out && !args.help) {
+	if (args.key && (args.encrypt != args.decrypt) && args.out && !args.help) {
 		return;
 	} else {
 		help();
@@ -101,14 +100,14 @@ int main (int argc, char *argv[])
 
 	FILE *k_fd = fopen(args.keypath, "r");
 
-	if(test_file(k_fd, args.keypath) != 32) {
+	if (test_file(k_fd, args.keypath) != 32) {
 		printf("Key size must be 32 bytes\n");
 		return -1;
 	}
 
 	u8 i;
 
-	for(i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++)
 		fread(&key[i], 4, 1, k_fd);
 
 	fclose(k_fd);
@@ -117,7 +116,7 @@ int main (int argc, char *argv[])
 
 	u64 srclen = test_file(s_fd, args.srcpath);
 
-	if(srclen == 0) {
+	if (srclen == 0) {
 		printf("Nothing to do, file %s is empty\n", args.srcpath);
 		fclose(s_fd);
 		return -1;
