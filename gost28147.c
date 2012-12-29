@@ -97,9 +97,6 @@ int main (int argc, char *argv[])
 {
 	parse_args(argc, argv);
 
-	u32 l;
-	u32 r;
-
 	u32 key[8];
 
 	FILE *k_fd = fopen(args.keypath, "r");
