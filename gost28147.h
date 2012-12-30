@@ -21,16 +21,27 @@ static const u8 sbox[8][16] = {
 	{  1, 15, 13,  0,  5,  7, 10,  4,  9,  2,  3, 14,  6, 11,  8, 12 }
 };
 
+static u8 sbox_x[4][256];
+
+void init_sbox_x(void)
+{
+	u8 i;
+	u8 j;
+	u16 k;
+
+	for (i = 0, j = 0; i < 4; i++, j += 2) {
+		for (k = 0; k < 256; k++) {
+			sbox_x[i][k] = sbox[j][k & 0x0f] | sbox[j+1][k>>4] << 4;
+		}
+	}
+}
+
 u32 f(u32 *r, u32 word)
 {
-	word = (word & 0x0fffffff) | (sbox[7][word >> 28] << 28);
-	word = (word & 0xf0ffffff) | (sbox[6][(word & 0x0f000000) >> 24] << 24);
-	word = (word & 0xff0fffff) | (sbox[5][(word & 0x00f00000) >> 20] << 20);
-	word = (word & 0xfff0ffff) | (sbox[4][(word & 0x000f0000) >> 16] << 16);
-	word = (word & 0xffff0fff) | (sbox[3][(word & 0x0000f000) >> 12] << 12);
-	word = (word & 0xfffff0ff) | (sbox[2][(word & 0x00000f00) >>  8] <<  8);
-	word = (word & 0xffffff0f) | (sbox[1][(word & 0x000000f0) >>  4] <<  4);
-	word = (word & 0xfffffff0) | (sbox[0][(word & 0x0000000f)]) ;
+	word = (word & 0x00ffffff) | (sbox_x[3][word >> 24] << 24);
+	word = (word & 0xff00ffff) | (sbox_x[2][(word & 0x00ff0000) >> 16] << 16);
+	word = (word & 0xffff00ff) | (sbox_x[1][(word & 0x0000ff00) >>  8] <<  8);
+	word = (word & 0xffffff00) | (sbox_x[0][(word & 0x000000ff)]);
 
 	return word << 11 | word >> (32-11);
 }

@@ -124,6 +124,8 @@ int main (int argc, char *argv[])
 
 	FILE *o_fd = fopen(args.outpath, "w");
 
+	init_sbox_x();
+
 	ecb_crypt(s_fd, o_fd, key, srclen, (u8) args.encrypt);
 
 	fclose(s_fd);
