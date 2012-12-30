@@ -31,7 +31,7 @@ void parse_args(int argc, char *argv[])
 	args.out     = 0;
 	args.outpath = NULL;
 
-	u32 opt;
+	int opt;
 
 	while ((opt = getopt(argc,argv, "k:d:e:o:")) != -1) {
 		switch (opt)
