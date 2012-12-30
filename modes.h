@@ -7,9 +7,9 @@ void ecb_crypt(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
 		exit(-1);
 	}
 
-	int i;
+	u64 i;
 
-	u32 blocks = size / 8;
+	u64 blocks = size / 8;
 
 	u32 l;
 	u32 r;
