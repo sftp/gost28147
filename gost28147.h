@@ -36,7 +36,7 @@ void init_sbox_x(void)
 	}
 }
 
-u32 f(u32 *r, u32 word)
+u32 f(u32 word)
 {
 	word = (word & 0x00ffffff) | (sbox_x[3][word >> 24] << 24);
 	word = (word & 0xff00ffff) | (sbox_x[2][(word & 0x00ff0000) >> 16] << 16);
@@ -59,13 +59,13 @@ void encrypt_block(u32 *l, u32 *r, u32 *key)
 	u8 i;
 
 	for (i = 0; i < 23; i += 2) {
-		*l ^= f(r, *r + key[i % 8]);
-		*r ^= f(l, *l + key[(i+1) % 8]);
+		*l ^= f(*r + key[i % 8]);
+		*r ^= f(*l + key[(i+1) % 8]);
 	}
 
 	for (i = 24; i < 31; i += 2) {
-		*l ^= f(r, *r + key[31-i]);
-		*r ^= f(l, *l + key[31-(i+1)]);
+		*l ^= f(*r + key[31-i]);
+		*r ^= f(*l + key[31-(i+1)]);
 	}
 
 	swap32(l, r);
@@ -76,13 +76,13 @@ void decrypt_block(u32 *l, u32 *r, u32 *key)
 	u8 i;
 
 	for (i = 0; i < 7; i += 2) {
-		*l ^= f(r, *r + key[i]);
-		*r ^= f(l, *l + key[i+1]);
+		*l ^= f(*r + key[i]);
+		*r ^= f(*l + key[i+1]);
 	}
 
 	for (i = 8; i < 31; i += 2) {
-		*l ^= f(r, *r + key[(31-i) % 8]);
-		*r ^= f(l, *l + key[(31-(i+1)) % 8]);
+		*l ^= f(*r + key[(31-i) % 8]);
+		*r ^= f(*l + key[(31-(i+1)) % 8]);
 	}
 
 	swap32(l, r);
