@@ -1,6 +1,6 @@
 #include <unistd.h>
 
-#include "modes.h"
+#include "files.h"
 
 void help(void) {
 	printf("Usage: gost28147 -k /path/to/key [-d|-e] /path/to/srcfile -o /path/to/outfile\n");
@@ -126,7 +126,7 @@ int main (int argc, char *argv[])
 
 	init_sbox_x();
 
-	ecb_crypt(s_fd, o_fd, key, srclen, (u8) args.encrypt);
+	ecb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
 
 	fclose(s_fd);
 	fclose(o_fd);

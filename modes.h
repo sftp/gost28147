@@ -1,38 +1,16 @@
 #include "gost28147.h"
 
-void ecb_crypt(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
+void ecb_crypt(u32 *buff, u64 size, u32 *key, u8 encrypt)
 {
-	if (size % 8 != 0) {
-		printf("In ECB mode sourse file size should be multiple of 8\n");
-		exit(-1);
-	}
-
 	u64 i;
 
-	u64 blocks = size / 8;
-
-	u32 l;
-	u32 r;
+	u64 subblocks = size / 4;
 
 	if (encrypt) {
-		for (i = 0; i < blocks; i++) {
-			fread(&r, 4, 1, src);
-			fread(&l, 4, 1, src);
-
-			encrypt_block(&l, &r, key);
-
-			fwrite(&r, 4, 1, dst);
-			fwrite(&l, 4, 1, dst);
-		}
+		for (i = 0; i < subblocks; i += 2)
+			encrypt_block(&(buff[i+1]), &(buff[i]), key);
 	} else {
-		for (i = 0; i < blocks; i++) {
-			fread(&r, 4, 1, src);
-			fread(&l, 4, 1, src);
-
-			decrypt_block(&l, &r, key);
-
-			fwrite(&r, 4, 1, dst);
-			fwrite(&l, 4, 1, dst);
-		}
+		for (i = 0; i < subblocks; i += 2)
+			decrypt_block(&(buff[i+1]), &(buff[i]), key);
 	}
 }

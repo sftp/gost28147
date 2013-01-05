@@ -18,7 +18,7 @@ PROGS = gost28147
 default: all
 all:    $(PROGS)
 
-gost28147:	gost28147.c gost28147.h modes.h
+gost28147:	gost28147.c gost28147.h files.h modes.h
 	$(E) "  CC      " $@
 	$(Q) ${CC} $(CFLAGS) gost28147.c -o gost28147
 
