@@ -1,13 +1,16 @@
 #include <unistd.h>
+#include <string.h>
 
 #include "files.h"
 
 void help(void) {
-	printf("Usage: gost28147 -k /path/to/key [-d|-e] /path/to/srcfile -o /path/to/outfile\n");
+	printf("Usage: gost28147 [-m mode] -k /path/to/key [-d|-e] /path/to/srcfile -o /path/to/outfile\n");
 }
 
 struct args_t {
 	u8 help;
+
+	u8 mode;
 
 	u8 key;
 	const char *keypath;
@@ -23,6 +26,7 @@ struct args_t {
 void parse_args(int argc, char *argv[])
 {
 	args.help    = 0;
+	args.mode    = 0;
 	args.key     = 0;
 	args.keypath = NULL;
 	args.encrypt = 0;
@@ -33,9 +37,19 @@ void parse_args(int argc, char *argv[])
 
 	int opt;
 
-	while ((opt = getopt(argc,argv, "k:d:e:o:")) != -1) {
-		switch (opt)
-		{
+	while ((opt = getopt(argc,argv, "m:k:d:e:o:")) != -1) {
+		switch (opt) {
+		case 'm':
+			if (strcmp(optarg, "ecb") == 0) {
+				args.mode = 0;
+			} else if (strcmp(optarg, "cnt") == 0) {
+				args.mode = 1;
+			} else {
+				printf("No such mode: %s\n", optarg);
+				exit(-1);
+			}
+			break;
+
 		case 'k':
 			args.key = 1;
 			args.keypath = optarg;
@@ -125,8 +139,15 @@ int main (int argc, char *argv[])
 	FILE *o_fd = fopen(args.outpath, "w");
 
 	init_sbox_x();
-
-	ecb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
+	
+	switch (args.mode) {
+	case 1:
+		cnt_crypt_file(s_fd, o_fd, key, srclen);
+		break;
+	case 0:
+		ecb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
+		break;
+	}
 
 	fclose(s_fd);
 	fclose(o_fd);
