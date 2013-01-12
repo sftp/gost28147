@@ -43,8 +43,6 @@ void cnt_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *n3, u32 *n4,
 
 	u8 rem = size % 8;
 
-	printf("size=%lu, subblocks_bytes=%lu, rem=%d\n", size, subblocks*4, rem);
-
 	for (i = 0; i < subblocks; i += 2) {
 		gen_gamma(n1, n2, n3, n4, key);
 
