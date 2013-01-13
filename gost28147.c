@@ -136,6 +136,11 @@ int main (int argc, char *argv[])
 		return -1;
 	}
 
+	if (args.mode == 0 && srclen % 8 != 0) {
+		printf("In ECB mode source file size should be multiple of 8\n");
+		return -1;
+	}
+
 	FILE *o_fd = fopen(args.outpath, "w");
 
 	init_sbox_x();

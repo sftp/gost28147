@@ -5,11 +5,6 @@
 void ecb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
 {
 	u32 *buffer = malloc(BUFF_SIZE);
-
-	if (size % 8 != 0) {
-		printf("In ECB mode source file size should be multiple of 8\n");
-		exit(-1);
-	}
 	
 	while (size) {
 		if (size > BUFF_SIZE) {
