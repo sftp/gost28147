@@ -35,7 +35,7 @@ void gen_gamma(u32 *n1, u32 *n2, u32 *n3, u32 *n4, u32 *key)
 }
 
 void cnt_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *n3, u32 *n4,
-               u32 *key)
+	       u32 *key)
 {
 	u64 i;
 
@@ -62,5 +62,5 @@ void cnt_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *n3, u32 *n4,
 
 		buff[i]   = (*n1 & ~(0xffffff00<<((rem-1)*8))) ^ buff[i];
 		buff[i+1] = 0;
-	}	
+	}
 }

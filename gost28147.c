@@ -144,7 +144,7 @@ int main (int argc, char *argv[])
 	FILE *o_fd = fopen(args.outpath, "w");
 
 	init_sbox_x();
-	
+
 	switch (args.mode) {
 	case 1:
 		cnt_crypt_file(s_fd, o_fd, key, srclen);

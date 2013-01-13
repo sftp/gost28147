@@ -5,7 +5,7 @@
 void ecb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
 {
 	u32 *buffer = malloc(BUFF_SIZE);
-	
+
 	while (size) {
 		if (size > BUFF_SIZE) {
 			fread(buffer, 1, BUFF_SIZE, src);
@@ -17,7 +17,7 @@ void ecb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
 			fread(buffer, 1, size, src);
 			ecb_crypt(buffer, size, key, encrypt);
 			fwrite(buffer, 1, size, dst);
-			
+
 			size = 0;
 		}
 	}
@@ -45,7 +45,7 @@ void cnt_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size)
 			fread(buffer, 1, size, src);
 			cnt_crypt(buffer, size, &n1, &n2, &n3, &n4, key);
 			fwrite(buffer, 1, size, dst);
-			
+
 			size = 0;
 		}
 	}
