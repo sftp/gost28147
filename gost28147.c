@@ -87,8 +87,8 @@ void parse_args(int argc, char *argv[])
 
 }
 
-u64 test_file(FILE *f, const char *path){
-
+u64 test_file(FILE *f, const char *path)
+{
 	u64 size;
 
 	fseek(f, 0, SEEK_END);
