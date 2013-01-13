@@ -89,11 +89,6 @@ void parse_args(int argc, char *argv[])
 
 u64 test_file(FILE *f, const char *path){
 
-	if (!f) {
-		printf("No such file: %s\n", path);
-		exit(-1);
-	}
-
 	u64 size;
 
 	fseek(f, 0, SEEK_END);
@@ -127,6 +122,11 @@ int main (int argc, char *argv[])
 	fclose(k_fd);
 
 	FILE *s_fd = fopen(args.srcpath, "r");
+
+	if (!s_fd) {
+		printf("No such file: %s\n", args.srcpath);
+		return -1;
+	}
 
 	u64 srclen = test_file(s_fd, args.srcpath);
 
