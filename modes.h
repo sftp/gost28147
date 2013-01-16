@@ -39,28 +39,12 @@ void cnt_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *n3, u32 *n4,
 {
 	u64 i;
 
-	u64 subblocks = size / 4;
-
-	u8 rem = size % 8;
+	u64 subblocks = (size + size % 8) / 4;
 
 	for (i = 0; i < subblocks; i += 2) {
 		gen_gamma(n1, n2, n3, n4, key);
 
 		buff[i]   = *n1 ^ buff[i];
 		buff[i+1] = *n2 ^ buff[i+1];
-	}
-
-	if (rem > 4) {
-		gen_gamma(n1, n2, n3, n4, key);
-
-		buff[i]   = *n1 ^ buff[i];
-		buff[i+1] = (*n2 & ~(0xffffff00<<((rem-1)*8))) ^ buff[i+1];
-	}
-
-	if (rem > 0) {
-		gen_gamma(n1, n2, n3, n4, key);
-
-		buff[i]   = (*n1 & ~(0xffffff00<<((rem-1)*8))) ^ buff[i];
-		buff[i+1] = 0;
 	}
 }
