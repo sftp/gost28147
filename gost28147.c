@@ -87,7 +87,7 @@ void parse_args(int argc, char *argv[])
 
 }
 
-u64 test_file(FILE *f, const char *path)
+u64 test_file(FILE *f)
 {
 	u64 size;
 
@@ -109,7 +109,7 @@ int main (int argc, char *argv[])
 
 	FILE *k_fd = fopen(args.keypath, "r");
 
-	if (test_file(k_fd, args.keypath) != 32) {
+	if (test_file(k_fd) != 32) {
 		printf("Key size must be 32 bytes\n");
 		return -1;
 	}
@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
 		return -1;
 	}
 
-	u64 srclen = test_file(s_fd, args.srcpath);
+	u64 srclen = test_file(s_fd);
 
 	if (srclen == 0) {
 		printf("Nothing to do, file %s is empty\n", args.srcpath);
