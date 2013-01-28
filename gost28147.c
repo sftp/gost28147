@@ -100,7 +100,7 @@ u64 test_file(FILE *f)
 }
 
 
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	if (!parse_args(argc, argv)) {
 		help();
