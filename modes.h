@@ -41,8 +41,8 @@ void cnt_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *n3, u32 *n4,
 	for (i = 0; i < subblocks; i += 2) {
 		gen_gamma(n1, n2, n3, n4, key);
 
-		buff[i]   = *n1 ^ buff[i];
-		buff[i+1] = *n2 ^ buff[i+1];
+		buff[i]   ^= *n1;
+		buff[i+1] ^= *n2;
 	}
 }
 
