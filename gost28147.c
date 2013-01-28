@@ -139,6 +139,7 @@ int main (int argc, char *argv[])
 
 	if (args.mode == 0 && srclen % 8 != 0) {
 		printf("In ECB mode source file size should be multiple of 8\n");
+		fclose(s_fd);
 		return -1;
 	}
 
