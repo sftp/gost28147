@@ -110,6 +110,11 @@ int main (int argc, char *argv[])
 
 	FILE *k_fd = fopen(args.keypath, "r");
 
+	if (!k_fd) {
+		printf("No such file: %s\n", args.keypath);
+		return -1;
+	}
+
 	if (test_file(k_fd) != 32) {
 		printf("Key size must be 32 bytes\n");
 		fclose(k_fd);
