@@ -44,6 +44,8 @@ void parse_args(int argc, char *argv[])
 				args.mode = 0;
 			} else if (strcmp(optarg, "cnt") == 0) {
 				args.mode = 1;
+			} else if (strcmp(optarg, "cfb") == 0) {
+				args.mode = 2;
 			} else {
 				printf("No such mode: %s\n", optarg);
 				exit(-1);
@@ -146,6 +148,9 @@ int main (int argc, char *argv[])
 	init_sbox_x();
 
 	switch (args.mode) {
+	case 2:
+		cfb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
+		break;
 	case 1:
 		cnt_crypt_file(s_fd, o_fd, key, srclen);
 		break;

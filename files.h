@@ -53,3 +53,27 @@ void cnt_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size)
 		}
 	}
 }
+
+void cfb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
+{
+	u32 *buffer = malloc(BUFF_SIZE);
+
+	u32 n1 = 0;
+	u32 n2 = 0;
+
+	while (size) {
+		if (size > BUFF_SIZE) {
+			fread(buffer, 1, BUFF_SIZE, src);
+			cfb_crypt(buffer, BUFF_SIZE, &n1, &n2, key, encrypt);
+			fwrite(buffer, 1, BUFF_SIZE, dst);
+
+			size -= BUFF_SIZE;
+		} else {
+			fread(buffer, 1, size, src);
+			cfb_crypt(buffer, size, &n1, &n2, key, encrypt);
+			fwrite(buffer, 1, size, dst);
+
+			size = 0;
+		}
+	}
+}

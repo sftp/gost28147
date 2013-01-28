@@ -45,3 +45,32 @@ void cnt_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *n3, u32 *n4,
 		buff[i+1] = *n2 ^ buff[i+1];
 	}
 }
+
+void cfb_crypt(u32 *buff, u64 size, u32 *n1, u32 *n2, u32 *key, u8 encrypt)
+{
+	u64 i;
+
+	u64 subblocks = (size + size % 8) / 4;
+
+	if (encrypt) {
+		for (i = 0; i < subblocks; i += 2) {
+			init_gamma(n1, n2, key);
+
+			buff[i]   ^= *n1;
+			buff[i+1] ^= *n2;
+			
+			*n1 = buff[i];
+			*n2 = buff[i+1];
+		}
+	} else {
+		for (i = 0; i < subblocks; i += 2) {
+			init_gamma(n1, n2, key);
+
+			buff[i]   ^= *n1;
+			buff[i+1] ^= *n2;
+
+			*n1 ^= buff[i];
+			*n2 ^= buff[i+1];
+		}
+	}
+}
