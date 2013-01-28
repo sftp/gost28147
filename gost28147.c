@@ -112,6 +112,7 @@ int main (int argc, char *argv[])
 
 	if (test_file(k_fd) != 32) {
 		printf("Key size must be 32 bytes\n");
+		fclose(k_fd);
 		return -1;
 	}
 
