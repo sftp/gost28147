@@ -4,7 +4,7 @@
 #include "files.h"
 
 void help(void) {
-	printf("Usage: gost28147 [-m mode] -k /path/to/key [-d|-e] /path/to/srcfile -o /path/to/outfile\n");
+	printf("Usage: gost28147 [-m mode] -k /path/to/key -d|-e /path/to/srcfile -o /path/to/outfile\n");
 }
 
 struct args_t {
