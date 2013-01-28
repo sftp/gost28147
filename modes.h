@@ -15,12 +15,9 @@ void ecb_crypt(u32 *buff, u64 size, u32 *key, u8 encrypt)
 	}
 }
 
-void init_gamma(u32 *n1, u32 *n2, u32 *n3, u32 *n4, u32 *key)
+void init_gamma(u32 *n1, u32 *n2, u32 *key)
 {
 	encrypt_block(n2, n1, key);
-
-	*n3 = *n1;
-	*n4 = *n2;
 }
 
 void gen_gamma(u32 *n1, u32 *n2, u32 *n3, u32 *n4, u32 *key)

@@ -32,7 +32,10 @@ void cnt_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size)
 	u32 n3 = 0;
 	u32 n4 = 0;
 
-	init_gamma(&n1, &n2, &n3, &n4, key);
+	init_gamma(&n1, &n2, key);
+
+	n3 = n1;
+	n4 = n2;
 
 	while (size) {
 		if (size > BUFF_SIZE) {
