@@ -23,7 +23,7 @@ struct args_t {
 	const char *outpath;
 } args;
 
-void parse_args(int argc, char *argv[])
+int parse_args(int argc, char *argv[])
 {
 	args.help    = 0;
 	args.mode    = 0;
@@ -48,7 +48,7 @@ void parse_args(int argc, char *argv[])
 				args.mode = 2;
 			} else {
 				printf("No such mode: %s\n", optarg);
-				exit(-1);
+				return 0;
 			}
 			break;
 
@@ -80,12 +80,10 @@ void parse_args(int argc, char *argv[])
 		};
 	}
 
-	if (args.key && (args.encrypt != args.decrypt) && args.out && !args.help) {
-		return;
-	} else {
-		help();
-		exit(0);
-	}
+	if (args.key && (args.encrypt != args.decrypt) && args.out && !args.help)
+		return 1;
+	else
+		return 0;
 }
 
 u64 test_file(FILE *f)
@@ -104,8 +102,11 @@ u64 test_file(FILE *f)
 
 int main (int argc, char *argv[])
 {
-	parse_args(argc, argv);
-
+	if (!parse_args(argc, argv)) {
+		help();
+		return -1;
+	}
+		
 	u32 key[8];
 
 	FILE *k_fd = fopen(args.keypath, "r");
