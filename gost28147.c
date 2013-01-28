@@ -86,7 +86,6 @@ void parse_args(int argc, char *argv[])
 		help();
 		exit(0);
 	}
-
 }
 
 u64 test_file(FILE *f)
