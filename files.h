@@ -23,12 +23,12 @@ void ecb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
 	}
 }
 
-void cnt_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size)
+void cnt_crypt_file(FILE *src, FILE *dst, u32 *key, u64 *iv, u64 size)
 {
 	u32 *buffer = malloc(BUFF_SIZE);
 
-	u32 n1 = 0;
-	u32 n2 = 0;
+	u32 n1 = (u32) *iv;
+	u32 n2 = (u32) (*iv >> 32);
 	u32 n3 = 0;
 	u32 n4 = 0;
 
@@ -54,12 +54,12 @@ void cnt_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size)
 	}
 }
 
-void cfb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 size, u8 encrypt)
+void cfb_crypt_file(FILE *src, FILE *dst, u32 *key, u64 *iv, u64 size, u8 encrypt)
 {
 	u32 *buffer = malloc(BUFF_SIZE);
 
-	u32 n1 = 0;
-	u32 n2 = 0;
+	u32 n1 = (u32) *iv;
+	u32 n2 = (u32) (*iv >> 32);
 
 	while (size) {
 		if (size > BUFF_SIZE) {

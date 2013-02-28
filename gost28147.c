@@ -15,6 +15,9 @@ struct args_t {
 	u8 key;
 	const char *keypath;
 
+	u64 iv;
+	const char *ivpath;
+
 	u8 encrypt;
 	u8 decrypt;
 	const char *srcpath;
@@ -29,6 +32,8 @@ int parse_args(int argc, char *argv[])
 	args.mode    = 0;
 	args.key     = 0;
 	args.keypath = NULL;
+	args.iv      = 0;
+	args.ivpath  = NULL;
 	args.encrypt = 0;
 	args.decrypt = 0;
 	args.srcpath = NULL;
@@ -37,7 +42,7 @@ int parse_args(int argc, char *argv[])
 
 	int opt;
 
-	while ((opt = getopt(argc,argv, "m:k:d:e:o:")) != -1) {
+	while ((opt = getopt(argc,argv, "m:k:i:d:e:o:")) != -1) {
 		switch (opt) {
 		case 'm':
 			if (strcmp(optarg, "ecb") == 0) {
@@ -55,6 +60,11 @@ int parse_args(int argc, char *argv[])
 		case 'k':
 			args.key = 1;
 			args.keypath = optarg;
+			break;
+
+		case 'i':
+			args.iv = 1;
+			args.ivpath = optarg;
 			break;
 
 		case 'e':
@@ -106,7 +116,7 @@ int main(int argc, char *argv[])
 		help();
 		return -1;
 	}
-		
+
 	u32 key[8];
 
 	FILE *k_fd = fopen(args.keypath, "r");
@@ -128,6 +138,22 @@ int main(int argc, char *argv[])
 		fread(&key[i], 4, 1, k_fd);
 
 	fclose(k_fd);
+
+	u64 iv = 0;
+
+	if (args.iv) {
+		FILE *iv_fd = fopen(args.ivpath, "r");
+
+		if (test_file(iv_fd) != 8) {
+			printf("IV size must be 8 bytes\n");
+			fclose(iv_fd);
+
+			return -1;
+		}
+
+		fread(&iv, 8, 1, iv_fd);
+		fclose(iv_fd);
+	}
 
 	FILE *s_fd = fopen(args.srcpath, "r");
 
@@ -156,10 +182,10 @@ int main(int argc, char *argv[])
 
 	switch (args.mode) {
 	case 2:
-		cfb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
+		cfb_crypt_file(s_fd, o_fd, key, &iv, srclen, (u8) args.encrypt);
 		break;
 	case 1:
-		cnt_crypt_file(s_fd, o_fd, key, srclen);
+		cnt_crypt_file(s_fd, o_fd, key, &iv, srclen);
 		break;
 	case 0:
 		ecb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
