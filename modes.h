@@ -23,7 +23,7 @@ void init_gamma(u32 *n1, u32 *n2, u32 *key)
 void gen_gamma(u32 *n1, u32 *n2, u32 *n3, u32 *n4, u32 *key)
 {
 	*n4 = *n4 + C1;
-	*n3 = (*n3 + C2 - 1) % 0xffffffff + 1;
+	*n3 = ((u64) *n3 + C2) % 0xffffffff;
 
 	*n1 = *n3;
 	*n2 = *n4;
