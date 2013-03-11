@@ -14,7 +14,10 @@ typedef uint64_t u64;
 struct gost_ctx_t {
 	u8   sbox_x[4][256];
 	u32  key[8];
-	u32  iv[2];
+	u32  n1;
+	u32  n2;
+	u32  n3;
+	u32  n4;
 	u8   encrypt;
 };
 

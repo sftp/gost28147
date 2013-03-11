@@ -149,10 +149,13 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 
-		for (i = 0; i < 2; i++)
-			fread(&ctx.iv[i], 4, 1, iv_fd);
+		fread(&ctx.n1, 4, 1, iv_fd);
+		fread(&ctx.n2, 4, 1, iv_fd);
 		
 		fclose(iv_fd);
+	} else {
+		ctx.n1 = 0;
+		ctx.n2 = 0;			
 	}
 
 	FILE *s_fd = fopen(args.srcpath, "r");
