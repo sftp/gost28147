@@ -35,8 +35,6 @@ const u8 sbox[8][16] = {
 	{  1, 15, 13,  0,  5,  7, 10,  4,  9,  2,  3, 14,  6, 11,  8, 12 }
 };
 
-//static u8 sbox_x[4][256];
-
 void init_sbox_x(const u8 sbox[8][16], u8 sbox_x[4][256])
 {
 	u8 i;
