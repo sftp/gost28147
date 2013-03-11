@@ -112,12 +112,12 @@ u64 test_file(FILE *f)
 
 int main(int argc, char *argv[])
 {
+	struct gost_ctx_t ctx;
+	
 	if (!parse_args(argc, argv)) {
 		help();
 		return -1;
 	}
-
-	u32 key[8];
 
 	FILE *k_fd = fopen(args.keypath, "r");
 
@@ -135,11 +135,9 @@ int main(int argc, char *argv[])
 	u8 i;
 
 	for (i = 0; i < 8; i++)
-		fread(&key[i], 4, 1, k_fd);
+		fread(&ctx.key[i], 4, 1, k_fd);
 
 	fclose(k_fd);
-
-	u64 iv = 0;
 
 	if (args.iv) {
 		FILE *iv_fd = fopen(args.ivpath, "r");
@@ -151,7 +149,9 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 
-		fread(&iv, 8, 1, iv_fd);
+		for (i = 0; i < 2; i++)
+			fread(&ctx.iv[i], 4, 1, iv_fd);
+		
 		fclose(iv_fd);
 	}
 
@@ -178,17 +178,19 @@ int main(int argc, char *argv[])
 
 	FILE *o_fd = fopen(args.outpath, "w");
 
-	init_sbox_x();
+	ctx.encrypt = args.encrypt;
+
+	init_sbox_x(sbox, ctx.sbox_x);
 
 	switch (args.mode) {
 	case 2:
-		cfb_crypt_file(s_fd, o_fd, key, &iv, srclen, (u8) args.encrypt);
+		cfb_crypt_file(s_fd, o_fd, &ctx, srclen);
 		break;
 	case 1:
-		cnt_crypt_file(s_fd, o_fd, key, &iv, srclen);
+		cnt_crypt_file(s_fd, o_fd, &ctx, srclen);
 		break;
 	case 0:
-		ecb_crypt_file(s_fd, o_fd, key, srclen, (u8) args.encrypt);
+		ecb_crypt_file(s_fd, o_fd, &ctx, srclen);
 		break;
 	}
 

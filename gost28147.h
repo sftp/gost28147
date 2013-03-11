@@ -11,10 +11,17 @@ typedef uint64_t u64;
 #define C1 0x1010104
 #define C2 0x1010101
 
+struct gost_ctx_t {
+	u8   sbox_x[4][256];
+	u32  key[8];
+	u32  iv[2];
+	u8   encrypt;
+};
+
 /*
  * RFC 4357 section 11.2
  */
-static const u8 sbox[8][16] = {
+const u8 sbox[8][16] = {
 	{  4, 10,  9,  2, 13,  8,  0, 14,  6, 11,  1, 12,  7, 15,  5,  3 },
 	{ 14, 11,  4, 12,  6, 13, 15, 10,  2,  3,  8,  1,  0,  7,  5,  9 },
 	{  5,  8,  1, 13, 10,  3,  4,  2, 14, 15, 12,  7,  6,  0,  9, 11 },
@@ -25,9 +32,9 @@ static const u8 sbox[8][16] = {
 	{  1, 15, 13,  0,  5,  7, 10,  4,  9,  2,  3, 14,  6, 11,  8, 12 }
 };
 
-static u8 sbox_x[4][256];
+//static u8 sbox_x[4][256];
 
-void init_sbox_x(void)
+void init_sbox_x(const u8 sbox[8][16], u8 sbox_x[4][256])
 {
 	u8 i;
 	u8 j;
@@ -40,12 +47,12 @@ void init_sbox_x(void)
 	}
 }
 
-u32 f(u32 word)
+u32 f(u32 word, struct gost_ctx_t *ctx)
 {
-	word = (word & 0x00ffffff) | (sbox_x[3][word >> 24] << 24);
-	word = (word & 0xff00ffff) | (sbox_x[2][(word & 0x00ff0000) >> 16] << 16);
-	word = (word & 0xffff00ff) | (sbox_x[1][(word & 0x0000ff00) >>  8] <<  8);
-	word = (word & 0xffffff00) | (sbox_x[0][(word & 0x000000ff)]);
+	word = (word & 0x00ffffff) | (ctx->sbox_x[3][word >> 24] << 24);
+	word = (word & 0xff00ffff) | (ctx->sbox_x[2][(word & 0x00ff0000) >> 16] << 16);
+	word = (word & 0xffff00ff) | (ctx->sbox_x[1][(word & 0x0000ff00) >>  8] <<  8);
+	word = (word & 0xffffff00) | (ctx->sbox_x[0][(word & 0x000000ff)]);
 
 	return word << 11 | word >> (32-11);
 }
@@ -58,35 +65,35 @@ void swap32(u32 *a, u32 *b)
 	*b = tmp;
 }
 
-void encrypt_block(u32 *l, u32 *r, u32 *key)
+void encrypt_block(u32 *l, u32 *r, struct gost_ctx_t *ctx)
 {
 	u8 i;
 
 	for (i = 0; i < 23; i += 2) {
-		*l ^= f(*r + key[i % 8]);
-		*r ^= f(*l + key[(i+1) % 8]);
+		*l ^= f(*r + ctx->key[i % 8], ctx);
+		*r ^= f(*l + ctx->key[(i+1) % 8], ctx);
 	}
 
 	for (i = 24; i < 31; i += 2) {
-		*l ^= f(*r + key[31-i]);
-		*r ^= f(*l + key[31-(i+1)]);
+		*l ^= f(*r + ctx->key[31-i], ctx);
+		*r ^= f(*l + ctx->key[31-(i+1)], ctx);
 	}
 
 	swap32(l, r);
 }
 
-void decrypt_block(u32 *l, u32 *r, u32 *key)
+void decrypt_block(u32 *l, u32 *r, struct gost_ctx_t *ctx)
 {
 	u8 i;
 
 	for (i = 0; i < 7; i += 2) {
-		*l ^= f(*r + key[i]);
-		*r ^= f(*l + key[i+1]);
+		*l ^= f(*r + ctx->key[i], ctx);
+		*r ^= f(*l + ctx->key[i+1], ctx);
 	}
 
 	for (i = 8; i < 31; i += 2) {
-		*l ^= f(*r + key[(31-i) % 8]);
-		*r ^= f(*l + key[(31-(i+1)) % 8]);
+		*l ^= f(*r + ctx->key[(31-i) % 8], ctx);
+		*r ^= f(*l + ctx->key[(31-(i+1)) % 8], ctx);
 	}
 
 	swap32(l, r);
