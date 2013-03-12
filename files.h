@@ -27,9 +27,6 @@ void cnt_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 {
 	u32 *buffer = malloc(BUFF_SIZE);
 
-	ctx->n3 = 0;
-	ctx->n4 = 0;
-
 	init_gamma(ctx);
 
 	ctx->n3 = ctx->n1;
