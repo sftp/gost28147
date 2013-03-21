@@ -12,7 +12,7 @@ typedef uint64_t u64;
 #define C2 0x1010101
 
 struct gost_ctx_t {
-	u8   sbox_x[4][256];
+	u32  sbox_x[4][256];
 	u32  key[8];
 	u32  n1;
 	u32  n2;
@@ -35,7 +35,7 @@ const u8 sbox[8][16] = {
 	{  1, 15, 13,  0,  5,  7, 10,  4,  9,  2,  3, 14,  6, 11,  8, 12 }
 };
 
-void init_sbox_x(const u8 sbox[8][16], u8 sbox_x[4][256])
+void init_sbox_x(const u8 sbox[8][16], u32 sbox_x[4][256])
 {
 	u8 i;
 	u8 j;
@@ -43,19 +43,18 @@ void init_sbox_x(const u8 sbox[8][16], u8 sbox_x[4][256])
 
 	for (i = 0, j = 0; i < 4; i++, j += 2) {
 		for (k = 0; k < 256; k++) {
-			sbox_x[i][k] = sbox[j][k & 0x0f] | sbox[j+1][k>>4] << 4;
+			sbox_x[i][k] = (sbox[j][k & 0x0f] | sbox[j+1][k>>4] << 4) << (j*4);
+			sbox_x[i][k] = sbox_x[i][k] << 11 | sbox_x[i][k] >> (32-11);
 		}
 	}
 }
 
 u32 f(u32 word, struct gost_ctx_t *ctx)
 {
-	word = (word & 0x00ffffff) | (ctx->sbox_x[3][word >> 24] << 24);
-	word = (word & 0xff00ffff) | (ctx->sbox_x[2][(word & 0x00ff0000) >> 16] << 16);
-	word = (word & 0xffff00ff) | (ctx->sbox_x[1][(word & 0x0000ff00) >>  8] <<  8);
-	word = (word & 0xffffff00) | (ctx->sbox_x[0][(word & 0x000000ff)]);
-
-	return word << 11 | word >> (32-11);
+	return ctx->sbox_x[3][word >> 24] ^
+		ctx->sbox_x[2][(word & 0x00ff0000) >> 16] ^
+		ctx->sbox_x[1][(word & 0x0000ff00) >>  8] ^
+		ctx->sbox_x[0][(word & 0x000000ff)];
 }
 
 void swap32(u32 *a, u32 *b)
