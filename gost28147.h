@@ -18,7 +18,10 @@ struct gost_ctx_t {
 	u32  n2;
 	u32  n3;
 	u32  n4;
-	u8   encrypt;
+	u32  mac_l;
+	u32  mac_r;
+	u8   encrypt : 1;
+	u8   mac     : 1;
 };
 
 /*
@@ -97,4 +100,17 @@ void decrypt_block(u32 *l, u32 *r, struct gost_ctx_t *ctx)
 	}
 
 	swap32(l, r);
+}
+
+void calc_mac(u32 *l, u32 *r, struct gost_ctx_t *ctx)
+{
+	u8 i;
+ 
+	for (i = 0; i < 15; i += 2) {
+		*l ^= f(*r + ctx->key[i % 8], ctx);
+		*r ^= f(*l + ctx->key[(i+1) % 8], ctx);
+	}
+
+	ctx->mac_l = *l;
+	ctx->mac_r = *r;
 }

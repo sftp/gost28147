@@ -22,6 +22,8 @@ struct args_t {
 	u8 decrypt;
 	const char *srcpath;
 
+	u8 mac;
+
 	u8 out;
 	const char *outpath;
 } args;
@@ -37,12 +39,13 @@ int parse_args(int argc, char *argv[])
 	args.encrypt = 0;
 	args.decrypt = 0;
 	args.srcpath = NULL;
+	args.mac     = 0;
 	args.out     = 0;
 	args.outpath = NULL;
 
 	int opt;
 
-	while ((opt = getopt(argc,argv, "m:k:i:d:e:o:")) != -1) {
+	while ((opt = getopt(argc,argv, "m:k:i:d:e:ao:")) != -1) {
 		switch (opt) {
 		case 'm':
 			if (strcmp(optarg, "ecb") == 0) {
@@ -75,6 +78,10 @@ int parse_args(int argc, char *argv[])
 		case 'd':
 			args.decrypt = 1;
 			args.srcpath = optarg;
+			break;
+
+		case 'a':
+			args.mac = 1;
 			break;
 
 		case 'o':
@@ -182,8 +189,12 @@ int main(int argc, char *argv[])
 	FILE *o_fd = fopen(args.outpath, "w");
 
 	ctx.encrypt = args.encrypt;
+	ctx.mac = args.mac;
 
 	init_sbox_x(sbox, ctx.sbox_x);
+
+	ctx.mac_l = 0;
+	ctx.mac_r = 0;
 
 	switch (args.mode) {
 	case 2:
@@ -196,6 +207,9 @@ int main(int argc, char *argv[])
 		ecb_crypt_file(s_fd, o_fd, &ctx, srclen);
 		break;
 	}
+
+	if (args.mac)
+		printf("mac = 0x%08x%08x\n", ctx.mac_l, ctx.mac_r);
 
 	fclose(s_fd);
 	fclose(o_fd);
