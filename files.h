@@ -21,6 +21,8 @@ void ecb_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 			size = 0;
 		}
 	}
+
+	memset(buffer, 0x00, BUFF_SIZE);
 }
 
 void cnt_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
@@ -47,6 +49,8 @@ void cnt_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 			size = 0;
 		}
 	}
+
+	memset(buffer, 0x00, BUFF_SIZE);
 }
 
 void cfb_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
@@ -68,4 +72,6 @@ void cfb_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 			size = 0;
 		}
 	}
+
+	memset(buffer, 0x00, BUFF_SIZE);
 }
