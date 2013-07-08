@@ -8,10 +8,16 @@ else
 endif
 export E Q
 
+D =
+ifneq ($(strip $(D)),)
+	DEBUG = -g
+endif
+export DEBUG
+
 CC = gcc
 
 WARNINGS = -Wall -Wstrict-prototypes
-CFLAGS   = -O2 $(WARNINGS)
+CFLAGS   = -O2 $(WARNINGS) $(DEBUG)
 
 PROGS = gost28147
 
