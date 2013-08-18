@@ -7,7 +7,9 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
-
+/* 
+ * Algorithm constants
+ */
 #define C1 0x1010104
 #define C2 0x1010101
 
