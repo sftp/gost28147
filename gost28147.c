@@ -2,12 +2,12 @@
 #include <string.h>
 #include <errno.h>
 #include <error.h>
+#include <err.h>
 
 #include "files.h"
 
-void help(void) {
-	printf("Usage: gost28147 -a [-m mode] -i ivfile -k keyfile -d|-e srcfile -o outfile\n");
-}
+static const char *usage = 
+	"usage: gost28147 -a [-m mode] -i ivfile -k keyfile -d|-e srcfile -o outfile";
 
 struct args_t {
 	u8 help;
@@ -123,10 +123,8 @@ int main(int argc, char *argv[])
 {
 	struct gost_ctx_t ctx;
 
-	if (!parse_args(argc, argv)) {
-		help();
-		return -1;
-	}
+	if (!parse_args(argc, argv))
+		errx(EINVAL, "%s", usage);
 
 	if (args.iv) {
 		FILE *iv_fd = fopen(args.ivpath, "r");
