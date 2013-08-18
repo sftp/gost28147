@@ -1,4 +1,5 @@
 #include "modes.h"
+#include "mem.h"
 
 #define BUFF_SIZE (8*1024)
 
@@ -22,7 +23,7 @@ void ecb_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 		}
 	}
 
-	memset(buffer, 0x00, BUFF_SIZE);
+	wipememory(buffer, BUFF_SIZE);
 }
 
 void cnt_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
@@ -50,7 +51,7 @@ void cnt_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 		}
 	}
 
-	memset(buffer, 0x00, BUFF_SIZE);
+	wipememory(buffer, BUFF_SIZE);
 }
 
 void cfb_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
@@ -73,5 +74,5 @@ void cfb_crypt_file(FILE *src, FILE *dst, struct gost_ctx_t *ctx, u64 size)
 		}
 	}
 
-	memset(buffer, 0x00, BUFF_SIZE);
+	wipememory(buffer, BUFF_SIZE);
 }
