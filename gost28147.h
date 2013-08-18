@@ -13,6 +13,8 @@ typedef uint64_t u64;
 #define C1 0x1010104
 #define C2 0x1010101
 
+#define KEY_SIZE 4 * 8 /* bytes */
+
 struct gost_ctx_t {
 	u32  sbox_x[4][256];
 	u32  key[8];
