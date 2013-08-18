@@ -1,5 +1,7 @@
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
+#include <error.h>
 
 #include "files.h"
 
@@ -147,10 +149,8 @@ int main(int argc, char *argv[])
 
 	FILE *s_fd = fopen(args.srcpath, "r");
 
-	if (!s_fd) {
-		printf("No such file: %s\n", args.srcpath);
-		return -1;
-	}
+	if (!s_fd)
+		error(errno, errno, "%s", args.srcpath);
 
 	u64 srclen = test_file(s_fd);
 
@@ -168,6 +168,9 @@ int main(int argc, char *argv[])
 
 	FILE *o_fd = fopen(args.outpath, "w");
 
+	if (!o_fd)
+		error(errno, errno, "%s", args.outpath);
+
 	ctx.encrypt = args.encrypt;
 	ctx.mac = args.mac;
 
@@ -178,10 +181,8 @@ int main(int argc, char *argv[])
 
 	FILE *k_fd = fopen(args.keypath, "r");
 
-	if (!k_fd) {
-		printf("No such file: %s\n", args.keypath);
-		return -1;
-	}
+	if (!k_fd)
+		error(errno, errno, "%s", args.keypath);
 
 	if (test_file(k_fd) != 32) {
 		printf("Key size must be 32 bytes\n");
