@@ -122,7 +122,7 @@ u64 test_file(FILE *f)
 int main(int argc, char *argv[])
 {
 	struct gost_ctx_t ctx;
-	
+
 	if (!parse_args(argc, argv)) {
 		help();
 		return -1;
@@ -140,11 +140,11 @@ int main(int argc, char *argv[])
 
 		fread(&ctx.n1, 4, 1, iv_fd);
 		fread(&ctx.n2, 4, 1, iv_fd);
-		
+
 		fclose(iv_fd);
 	} else {
 		ctx.n1 = 0;
-		ctx.n2 = 0;			
+		ctx.n2 = 0;
 	}
 
 	FILE *s_fd = fopen(args.srcpath, "r");
