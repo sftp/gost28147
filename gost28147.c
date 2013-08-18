@@ -126,26 +126,6 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	FILE *k_fd = fopen(args.keypath, "r");
-
-	if (!k_fd) {
-		printf("No such file: %s\n", args.keypath);
-		return -1;
-	}
-
-	if (test_file(k_fd) != 32) {
-		printf("Key size must be 32 bytes\n");
-		fclose(k_fd);
-		return -1;
-	}
-
-	u8 i;
-
-	for (i = 0; i < 8; i++)
-		fread(&ctx.key[i], 4, 1, k_fd);
-
-	fclose(k_fd);
-
 	if (args.iv) {
 		FILE *iv_fd = fopen(args.ivpath, "r");
 
@@ -196,6 +176,27 @@ int main(int argc, char *argv[])
 	ctx.mac_l = 0;
 	ctx.mac_r = 0;
 
+	FILE *k_fd = fopen(args.keypath, "r");
+
+	if (!k_fd) {
+		printf("No such file: %s\n", args.keypath);
+		return -1;
+	}
+
+	if (test_file(k_fd) != 32) {
+		printf("Key size must be 32 bytes\n");
+		fclose(k_fd);
+		return -1;
+	}
+
+	u8 i;
+
+	for (i = 0; i < 8; i++)
+		fread(&ctx.key[i], 4, 1, k_fd);
+
+	fclose(k_fd);
+
+
 	switch (args.mode) {
 	case 2:
 		cfb_crypt_file(s_fd, o_fd, &ctx, srclen);
@@ -207,6 +208,8 @@ int main(int argc, char *argv[])
 		ecb_crypt_file(s_fd, o_fd, &ctx, srclen);
 		break;
 	}
+
+	wipememory(ctx.key, KEY_SIZE);
 
 	if (args.mac)
 		printf("mac = 0x%08x%08x\n", ctx.mac_l, ctx.mac_r);
