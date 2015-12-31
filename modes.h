@@ -42,8 +42,21 @@ void init_gamma(struct gost_ctx_t *ctx)
 
 void gen_gamma(struct gost_ctx_t *ctx)
 {
-	ctx->n4 = ctx->n4 + C1;
-	ctx->n3 = ((u64) ctx->n3 + C2) % 0xffffffff;
+	u64 value;
+
+	//
+	// GOST 28147-89 (addendum 4.2)
+	//
+	//   a + b (mod 2^32) ::= { a + b, if (a + b) < 2^32; a + b - 2^32, elsewhere }
+	//   a + b (mod 2^32 - 1) ::= { a + b, if (a + b) < 2^32; a + b - 2^32 + 1, elsewhere }
+	//
+
+	// ADD C1 (mod 2^32)
+	ctx->n4 = (u32)C1 + ctx->n4;
+
+	// ADD C2 (mod 2^32 - 1)
+	  value = (u64)C2 + ctx->n3;
+	ctx->n3 = (u32)(value + (value >> 32));
 
 	ctx->n1 = ctx->n3;
 	ctx->n2 = ctx->n4;
