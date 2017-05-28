@@ -51,12 +51,20 @@ void gen_gamma(struct gost_ctx_t *ctx)
 	//   a + b (mod 2^32 - 1) ::= { a + b, if (a + b) < 2^32; a + b - 2^32 + 1, elsewhere }
 	//
 
-	// ADD C1 (mod 2^32)
-	ctx->n4 = (u32)C1 + ctx->n4;
+	//
+	// GOST 28147-89 (sections 3.1.4 - 3.1.5)
+	//
+	// High word N4 should be summed with C1 (0x1010104) by modulus 2^32-1
+	//  Low word N3 should be summed with C2 (0x1010101) by modulus 2^32
+	//
+	//
 
-	// ADD C2 (mod 2^32 - 1)
-	  value = (u64)C2 + ctx->n3;
-	ctx->n3 = (u32)(value + (value >> 32));
+	// ADD C1 (mod 2^32 - 1)
+	  value = (u64)C1 + ctx->n4;
+	ctx->n4 = (u32)(value + (value >> 32));
+
+	// ADD C2 (mod 2^32)
+	ctx->n3 = (u32)C2 + ctx->n3;
 
 	ctx->n1 = ctx->n3;
 	ctx->n2 = ctx->n4;
