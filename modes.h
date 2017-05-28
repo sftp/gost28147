@@ -68,7 +68,7 @@ void cnt_crypt(u32 *buff, u64 size, struct gost_ctx_t *ctx)
 {
 	u64 i;
 
-	u64 subblocks = (size + size % 8) / 4;
+	u64 subblocks = size / 4 + !!(size % 4);
 
 	if (ctx->mac) {
 		if (ctx->encrypt) {
@@ -108,7 +108,7 @@ void cfb_crypt(u32 *buff, u64 size, struct gost_ctx_t *ctx)
 {
 	u64 i;
 
-	u64 subblocks = (size + size % 8) / 4;
+	u64 subblocks = size / 4 + !!(size % 4);
 
 	if (ctx->encrypt) {
 		if (ctx->mac) {
